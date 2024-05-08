@@ -47,7 +47,7 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Segoe UI", 16.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            label1.Location = new Point(173, 39);
+            label1.Location = new Point(173, 30);
             label1.Name = "label1";
             label1.Size = new Size(299, 38);
             label1.TabIndex = 0;
@@ -56,10 +56,10 @@
             // inputdate
             // 
             inputdate.AutoSize = true;
-            inputdate.Font = new Font("Segoe UI", 7.8F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inputdate.Location = new Point(55, 89);
+            inputdate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            inputdate.Location = new Point(55, 79);
             inputdate.Name = "inputdate";
-            inputdate.Size = new Size(40, 17);
+            inputdate.Size = new Size(62, 28);
             inputdate.TabIndex = 1;
             inputdate.Text = "ДАТА";
             // 
@@ -118,7 +118,7 @@
             checkedListBox1.FormattingEnabled = true;
             checkedListBox1.Location = new Point(58, 230);
             checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(262, 136);
+            checkedListBox1.Size = new Size(290, 136);
             checkedListBox1.TabIndex = 8;
             // 
             // checkBox1
@@ -130,6 +130,7 @@
             checkBox1.TabIndex = 9;
             checkBox1.Text = "Добавить заметку";
             checkBox1.UseVisualStyleBackColor = true;
+            checkBox1.CheckedChanged += checkBox1_CheckedChanged;
             // 
             // button1
             // 
@@ -145,7 +146,7 @@
             // 
             button2.BackColor = Color.IndianRed;
             button2.FlatStyle = FlatStyle.Popup;
-            button2.Location = new Point(599, 0);
+            button2.Location = new Point(614, 0);
             button2.Name = "button2";
             button2.Size = new Size(30, 30);
             button2.TabIndex = 11;
@@ -158,7 +159,7 @@
             flowLayoutPanel1.BackColor = Color.LightGray;
             flowLayoutPanel1.Location = new Point(0, 0);
             flowLayoutPanel1.Name = "flowLayoutPanel1";
-            flowLayoutPanel1.Size = new Size(599, 30);
+            flowLayoutPanel1.Size = new Size(614, 30);
             flowLayoutPanel1.TabIndex = 12;
             flowLayoutPanel1.MouseDown += InputForm_MouseDown;
             // 
@@ -167,7 +168,7 @@
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(238, 236, 236);
-            ClientSize = new Size(628, 469);
+            ClientSize = new Size(640, 469);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(button2);
             Controls.Add(button1);

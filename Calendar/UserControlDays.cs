@@ -12,8 +12,12 @@ namespace Calendar
 {
     public partial class UserControlDays : UserControl
     {
-        public UserControlDays()
+        public int year, month, day;
+        public InputForm inputForm;
+
+        public UserControlDays(InputForm inputForm)
         {
+            this.inputForm = inputForm;
             InitializeComponent();
         }
 
@@ -28,8 +32,13 @@ namespace Calendar
 
         private void UserControlDays_Click(object sender, EventArgs e)
         {
-            InputForm inputForm = new InputForm();
-            inputForm.ShowDialog();
+            if (inputForm != null)
+            {
+                inputForm.year = year;
+                inputForm.month = month;
+                inputForm.day = day;
+                inputForm.ShowDialog();
+            }
         }
     }
 }

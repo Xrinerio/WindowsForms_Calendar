@@ -6,9 +6,16 @@ namespace Calendar
     {
         InputForm? temp = null;
         int month, year;
+        InputForm inputForm = new InputForm();
+        UserControlDays[] spisokdays = new UserControlDays[31];
+
         public Form1()
         {
             InitializeComponent();
+            for(int i = 0; i < 31; i++)
+            {
+                spisokdays[i] = new UserControlDays(inputForm);
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -32,9 +39,11 @@ namespace Calendar
 
             for (int i = 1; i < days; i++)
             {
-                UserControlDays UCDays = new UserControlDays();
-                UCDays.days(i);
-                daycontainer.Controls.Add(UCDays);
+                spisokdays[i - 1].year = year;
+                spisokdays[i - 1].month = month;
+                spisokdays[i - 1].day = i;
+                spisokdays[i - 1].days(i);
+                daycontainer.Controls.Add(spisokdays[i - 1]);
             }
         }
 

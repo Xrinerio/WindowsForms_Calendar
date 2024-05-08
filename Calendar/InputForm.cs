@@ -12,6 +12,7 @@ namespace Calendar
 {
     public partial class InputForm : Form
     {
+        public int year, month, day;
         public static class Global
         {
             public static Dictionary<string, string> slovar = new Dictionary<string, string>();
@@ -57,13 +58,14 @@ namespace Calendar
                 checkedListBox1.Items.Add(item.Key);
             }
             checkedListBox1.CheckOnClick = true;
-            button1.Enabled = false;
+            textBox1.Visible = false;
         }
 
         private void InputForm_Load(object sender, EventArgs e)
         {
-            
-            
+            inputdate.Text = new DateTime(year, month, day).ToString("D");
+            textBox_nowtime.Text = DateTime.Now.ToString("t");
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -87,6 +89,18 @@ namespace Calendar
         private void flowLayoutPanel1_MouseMove(object sender, MouseEventArgs e)
         {
 
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+            if(checkBox1.Checked)
+            {
+                textBox1.Visible = true;
+            }
+            else
+            {
+                textBox1.Visible = false;
+            }
         }
     }
 }
