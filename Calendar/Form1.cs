@@ -2,6 +2,7 @@ using System.Globalization;
 using static Calendar.InputForm;
 using System.IO;
 using System.Text;
+using System.Windows.Forms;
 
 namespace Calendar
 {
@@ -11,11 +12,13 @@ namespace Calendar
         int month, year;
         InputForm inputForm = new InputForm();
         UserControlDays[] spisokdays = new UserControlDays[31];
+        List<Data> datas = new List<Data>();
+
 
         public Form1()
         {
             InitializeComponent();
-            for(int i = 0; i < 31; i++)
+            for (int i = 0; i < 31; i++)
             {
                 spisokdays[i] = new UserControlDays(inputForm);
             }
@@ -25,8 +28,9 @@ namespace Calendar
         {
             DisplayDays();
         }
-        public void LoadPage(int year, int month)
+        private void LoadPage(int year, int month)
         {
+            LoadDB();
             string monthname = new DateTime(year, month, 1).ToString("MMMM", CultureInfo.GetCultureInfo("ru"));
             monthyear.Text = monthname + " " + year;
 
@@ -39,17 +43,29 @@ namespace Calendar
                 UserControlBlank UCBlank = new UserControlBlank();
                 daycontainer.Controls.Add(UCBlank);
             }
-
             for (int i = 1; i < days; i++)
             {
                 spisokdays[i - 1].year = year;
                 spisokdays[i - 1].month = month;
                 spisokdays[i - 1].day = i;
                 spisokdays[i - 1].days(i);
-                if(CheckDBdata(year,month,days))
+                spisokdays[i - 1].BackColor = Color.Gainsboro;
+                int k = 0;
+                
+                if (CheckDBdata(year, month, i))
                 {
-                    spisokdays[i-1].BackColor = Color.LightYellow;
+                    spisokdays[i - 1].BackColor = Color.Moccasin;
                 }
+                foreach (Data data in datas)
+                {
+                    if (data.year == year && data.month == month && data.day == i)
+                    {
+                        k++;
+                    }
+                    
+                }
+                
+                spisokdays[i - 1].setNotes(k);
                 daycontainer.Controls.Add(spisokdays[i - 1]);
             }
         }
@@ -68,6 +84,12 @@ namespace Calendar
 
         }
 
+        private void Refresh(object sender, EventArgs e)
+        {
+            daycontainer.Controls.Clear();
+            LoadPage(year, month);
+        }
+
         private void btnprev_Click(object sender, EventArgs e)
         {
             daycontainer.Controls.Clear();
@@ -79,8 +101,6 @@ namespace Calendar
             }
 
             LoadPage(year, month);
-
-
         }
         private void DisplayDays()
         {
@@ -103,7 +123,7 @@ namespace Calendar
             this.WndProc(ref m);
         }
 
-        public bool CheckDBdata(int takeyear, int takemonth, int takeday)
+        private bool CheckDBdata(int takeyear, int takemonth, int takeday)
         {
             using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
             {
@@ -113,7 +133,8 @@ namespace Calendar
                     string[] text = line.Split("::");
                     try
                     {
-                        if (text[1] == Convert.ToString(takeday) && text[2] == Convert.ToString(takemonth) && text[3] == Convert.ToString(takeyear)){
+                        if (text[1] == Convert.ToString(takeday) && text[2] == Convert.ToString(takemonth) && text[3] == Convert.ToString(takeyear))
+                        {
                             return true;
                         }
                     }
@@ -125,6 +146,20 @@ namespace Calendar
                 }
                 return false;
             }
-        }            
+        }
+
+        private void LoadDB()
+        {
+            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            {
+                datas.Clear();
+                string? line = sr.ReadLine();
+                while (line != null)
+                {
+                    datas.Add(new Data(line));
+                    line = sr.ReadLine();
+                }
+            }
+        }
     }
 }

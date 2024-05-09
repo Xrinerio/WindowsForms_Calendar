@@ -14,10 +14,21 @@ namespace Calendar
     public partial class InputForm : Form
     {
         public int year, month, day;
+        List<Data> datas = new List<Data>();
+        bool first = true;
+
+        public void Clean()
+        {
+            textBox_input.Clear();
+            textBox1.Clear();
+            checkBox1.Checked = false;
+            checkedListBox1.Items.Clear();
+            
+        }
 
         private void AddToDB(string fileName)
         {
-            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt"))
+            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", true))
             {
                 writer.WriteLine(fileName);
                 writer.Close();
@@ -63,10 +74,6 @@ namespace Calendar
         {
             InitializeComponent();
             ReadSlovar("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\slovar.txt");
-            foreach (var item in Global.slovar)
-            {
-                checkedListBox1.Items.Add(item.Key);
-            }
             checkedListBox1.CheckOnClick = true;
             textBox1.Visible = false;
             textBox_nowtime.Mask = "00:00";
@@ -74,10 +81,18 @@ namespace Calendar
 
         private void InputForm_Load(object sender, EventArgs e)
         {
+            checkedListBox2.Items.Clear();
+            foreach (var item in Global.slovar)
+            {
+                checkedListBox1.Items.Add(item.Key);
+            }
             inputdate.Text = new DateTime(year, month, day).ToString("D");
             textBox_nowtime.Text = DateTime.Now.ToString("t");
+            
 
+            LoadItems();
         }
+
 
         private void button2_Click(object sender, EventArgs e)
         {
@@ -89,16 +104,6 @@ namespace Calendar
             flowLayoutPanel1.Capture = false;
             Message m = Message.Create(base.Handle, 0xa1, new IntPtr(2), IntPtr.Zero);
             this.WndProc(ref m);
-
-        }
-
-        private void flowLayoutPanel1_MouseUp(object sender, MouseEventArgs e)
-        {
-
-        }
-
-        private void flowLayoutPanel1_MouseMove(object sender, MouseEventArgs e)
-        {
 
         }
 
@@ -116,27 +121,34 @@ namespace Calendar
 
         private void button1_Click(object sender, EventArgs e)
         {
-            bool flag = false;
             string tofile = $"{textBox_nowtime.Text}::{day}::{month}::{year}::";
 
             if (checkBox1.Checked)
             {
-                tofile += "note::"+textBox1.Text+"::";
+                tofile += "note::" + textBox1.Text + "::";
             }
-            if (textBox_input.Text != null) 
+            if (textBox_input.Text != null)
             {
-                tofile += "press::"+textBox_input.Text+"::";
+                tofile += "press::" + textBox_input.Text + "::";
             }
-            if(checkedListBox1.CheckedItems.Count > 0)
+            if (checkedListBox1.CheckedItems.Count > 0)
             {
                 string sympt = "sympt";
-                foreach(string el in checkedListBox1.CheckedItems)
+                foreach (string el in checkedListBox1.CheckedItems)
                 {
-                    sympt += "::"+el;
+                    sympt += "::" + el;
                 }
                 tofile += sympt;
             }
-            AddToDB(tofile);
+            foreach(Data data in datas)
+            {
+                if (textBox1.Text != data.note && textBox_input.Text != data.press && data.day != day && data.month != month && data.year != year && data.time != textBox_nowtime.Text)
+                {
+                    AddToDB(tofile);
+                }
+            }
+            
+            
             this.Close();
         }
 
@@ -160,10 +172,143 @@ namespace Calendar
             }
             catch
             {
+                button1.Enabled = false;
+            }
+
+
+        }
+
+        private void LoadItems()
+        {
+            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            {
+                datas.Clear();
+                string? line = sr.ReadLine();
+                while (line != null)
+                {
+                    string[] text = line.Split("::");
+                    try
+                    {
+                        if (text[1] == Convert.ToString(day) && text[2] == Convert.ToString(month) && text[3] == Convert.ToString(year))
+                        {
+                            checkedListBox2.Items.Add(text[0]);
+                            datas.Add(new Data(line));
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                    line = sr.ReadLine();
+                }
+            }
+            checkedListBox2.Items.Add("Добавить запись");
+            checkedListBox2.SetSelected(datas.Count,true);
+        }
+
+        private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                string? selectedTime = Convert.ToString(checkedListBox2.SelectedItem);
+                foreach (Data data in datas)
+                {
+                    if(data.time == selectedTime)
+                    {
+                        Clean();
+                        foreach (var item in Global.slovar)
+                        {
+                            checkedListBox1.Items.Add(item.Key);
+                        }
+                        textBox_nowtime.Text = selectedTime;
+                        textBox_input.Text = data.press;
+                        if(data.note != "")
+                        {
+                            checkBox1.Checked = true;
+                            textBox1.Text = data.note;
+                        }
+                        foreach(string el in data.sympt)
+                        {
+                            for(int i = 0; i < checkedListBox1.Items.Count; i++)
+                            {
+                                if(el == checkedListBox1.Items[i].ToString())
+                                {
+                                    checkedListBox1.SetItemChecked(i, true);
+                                }
+                            }
+                        }
+                    }
+                }
+                if (selectedTime == "Добавить запись")
+                {
+                    if (first)
+                    {
+                        first = false;
+                    }
+                    else
+                    {
+                        Clean();
+                        foreach (var item in Global.slovar)
+                        {
+                            checkedListBox1.Items.Add(item.Key);
+                        }
+                        inputdate.Text = new DateTime(year, month, day).ToString("D");
+                        textBox_nowtime.Text = DateTime.Now.ToString("t");
+                    }
+                }
+            }
+            catch
+            {
                 
             }
+
             
-            
+        }
+    }
+
+    public partial class Data
+    {
+        public string time;
+        public int day, month, year;
+        public string note = "";
+        public string press = "";
+        public List<string> sympt = new List<string>();
+        public Data(string line) 
+        {
+            string[] data = line.Split("::");
+            for (int i = 0; i < data.Length; i++)
+            {
+                switch (i)
+                {
+                    case 0:
+                        time = data[i];
+                        break;
+                    case 1:
+                        day = Convert.ToInt32(data[i]);
+                        break;
+                    case 2:
+                        month = Convert.ToInt32(data[i]);
+                        break;
+                    case 3:
+                        year = Convert.ToInt32(data[i]);
+                        break;
+                }
+                if (data[i] == "note") 
+                {
+                    note = data[i + 1];
+                }
+                if (data[i] == "press")
+                {
+                    press = data[i + 1];
+                }
+                if (data[i] == "sympt")
+                {
+                    for(int j = i;  j < data.Length; j++)
+                    {
+                        sympt.Add(data[j]);
+                    }
+                }
+            }
         }
     }
 }

@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             UCDays = new Label();
+            notesscore = new Label();
             SuspendLayout();
             // 
             // UCDays
@@ -41,11 +42,21 @@
             UCDays.TabIndex = 0;
             UCDays.Text = "00";
             // 
+            // notesscore
+            // 
+            notesscore.AutoSize = true;
+            notesscore.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            notesscore.Location = new Point(15, 76);
+            notesscore.Name = "notesscore";
+            notesscore.Size = new Size(0, 23);
+            notesscore.TabIndex = 1;
+            // 
             // UserControlDays
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Gainsboro;
+            Controls.Add(notesscore);
             Controls.Add(UCDays);
             Cursor = Cursors.Hand;
             Name = "UserControlDays";
@@ -59,5 +70,6 @@
         #endregion
 
         private Label UCDays;
+        private Label notesscore;
     }
 }
