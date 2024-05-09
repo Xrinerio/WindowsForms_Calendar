@@ -33,14 +33,14 @@
             label3 = new Label();
             label4 = new Label();
             label5 = new Label();
-            textBox_input = new TextBox();
-            textBox_nowtime = new TextBox();
             textBox1 = new TextBox();
             checkedListBox1 = new CheckedListBox();
             checkBox1 = new CheckBox();
             button1 = new Button();
             button2 = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
+            textBox_nowtime = new MaskedTextBox();
+            textBox_input = new MaskedTextBox();
             SuspendLayout();
             // 
             // label1
@@ -90,21 +90,6 @@
             label5.TabIndex = 4;
             label5.Text = "Введите ваше давление";
             // 
-            // textBox_input
-            // 
-            textBox_input.Location = new Point(354, 144);
-            textBox_input.Name = "textBox_input";
-            textBox_input.Size = new Size(231, 27);
-            textBox_input.TabIndex = 5;
-            // 
-            // textBox_nowtime
-            // 
-            textBox_nowtime.Location = new Point(58, 144);
-            textBox_nowtime.Name = "textBox_nowtime";
-            textBox_nowtime.Size = new Size(153, 27);
-            textBox_nowtime.TabIndex = 6;
-            textBox_nowtime.Text = "NOW TIME";
-            // 
             // textBox1
             // 
             textBox1.Location = new Point(354, 230);
@@ -141,6 +126,7 @@
             button1.TabIndex = 10;
             button1.Text = "Подтвердить";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // button2
             // 
@@ -163,20 +149,36 @@
             flowLayoutPanel1.TabIndex = 12;
             flowLayoutPanel1.MouseDown += InputForm_MouseDown;
             // 
+            // textBox_nowtime
+            // 
+            textBox_nowtime.Location = new Point(55, 139);
+            textBox_nowtime.Name = "textBox_nowtime";
+            textBox_nowtime.Size = new Size(125, 27);
+            textBox_nowtime.TabIndex = 13;
+            textBox_nowtime.Text = "NOW TIME";
+            textBox_nowtime.TextChanged += textBox_nowtime_TextChanged;
+            // 
+            // textBox_input
+            // 
+            textBox_input.Location = new Point(354, 139);
+            textBox_input.Name = "textBox_input";
+            textBox_input.Size = new Size(175, 27);
+            textBox_input.TabIndex = 14;
+            // 
             // InputForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(238, 236, 236);
             ClientSize = new Size(640, 469);
+            Controls.Add(textBox_input);
+            Controls.Add(textBox_nowtime);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(button2);
             Controls.Add(button1);
             Controls.Add(checkBox1);
             Controls.Add(checkedListBox1);
             Controls.Add(textBox1);
-            Controls.Add(textBox_nowtime);
-            Controls.Add(textBox_input);
             Controls.Add(label5);
             Controls.Add(label4);
             Controls.Add(label3);
@@ -197,13 +199,13 @@
         private Label label3;
         private Label label4;
         private Label label5;
-        private TextBox textBox_input;
-        private TextBox textBox_nowtime;
         private TextBox textBox1;
         private CheckedListBox checkedListBox1;
         private CheckBox checkBox1;
         private Button button1;
         private Button button2;
         private FlowLayoutPanel flowLayoutPanel1;
+        private MaskedTextBox textBox_nowtime;
+        private MaskedTextBox textBox_input;
     }
 }

@@ -1,4 +1,7 @@
 using System.Globalization;
+using static Calendar.InputForm;
+using System.IO;
+using System.Text;
 
 namespace Calendar
 {
@@ -43,6 +46,10 @@ namespace Calendar
                 spisokdays[i - 1].month = month;
                 spisokdays[i - 1].day = i;
                 spisokdays[i - 1].days(i);
+                if(CheckDBdata(year,month,days))
+                {
+                    spisokdays[i-1].BackColor = Color.LightYellow;
+                }
                 daycontainer.Controls.Add(spisokdays[i - 1]);
             }
         }
@@ -96,19 +103,28 @@ namespace Calendar
             this.WndProc(ref m);
         }
 
-        public void openInputForm(InputForm inputForm)
+        public bool CheckDBdata(int takeyear, int takemonth, int takeday)
         {
-            if (temp != null)
+            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
             {
-                temp.Close();
+                string? line = sr.ReadLine();
+                while (line != null)
+                {
+                    string[] text = line.Split("::");
+                    try
+                    {
+                        if (text[1] == Convert.ToString(takeday) && text[2] == Convert.ToString(takemonth) && text[3] == Convert.ToString(takeyear)){
+                            return true;
+                        }
+                    }
+                    catch
+                    {
+                        continue;
+                    }
+                    line = sr.ReadLine();
+                }
+                return false;
             }
-            temp = inputForm;
-            temp.Show();
-        }
-        public void closeInputForm()
-        {
-            temp.Close();
-            temp = null;
-        }
+        }            
     }
 }

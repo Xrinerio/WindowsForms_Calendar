@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,6 +14,15 @@ namespace Calendar
     public partial class InputForm : Form
     {
         public int year, month, day;
+
+        private void AddToDB(string fileName)
+        {
+            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt"))
+            {
+                writer.WriteLine(fileName);
+                writer.Close();
+            }
+        }
         public static class Global
         {
             public static Dictionary<string, string> slovar = new Dictionary<string, string>();
@@ -59,6 +69,7 @@ namespace Calendar
             }
             checkedListBox1.CheckOnClick = true;
             textBox1.Visible = false;
+            textBox_nowtime.Mask = "00:00";
         }
 
         private void InputForm_Load(object sender, EventArgs e)
@@ -93,7 +104,7 @@ namespace Calendar
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBox1.Checked)
+            if (checkBox1.Checked)
             {
                 textBox1.Visible = true;
             }
@@ -101,6 +112,58 @@ namespace Calendar
             {
                 textBox1.Visible = false;
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            bool flag = false;
+            string tofile = $"{textBox_nowtime.Text}::{day}::{month}::{year}::";
+
+            if (checkBox1.Checked)
+            {
+                tofile += "note::"+textBox1.Text+"::";
+            }
+            if (textBox_input.Text != null) 
+            {
+                tofile += "press::"+textBox_input.Text+"::";
+            }
+            if(checkedListBox1.CheckedItems.Count > 0)
+            {
+                string sympt = "sympt";
+                foreach(string el in checkedListBox1.CheckedItems)
+                {
+                    sympt += "::"+el;
+                }
+                tofile += sympt;
+            }
+            AddToDB(tofile);
+            this.Close();
+        }
+
+        private void textBox_nowtime_TextChanged(object sender, EventArgs e)
+        {
+            string[] taketime = textBox_nowtime.Text.Split(":");
+            try
+            {
+                int hours = Convert.ToInt32(taketime[0]);
+                int minutes = Convert.ToInt32(taketime[1]);
+                if (hours > 23 || minutes > 59)
+                {
+                    label3.ForeColor = Color.Red;
+                    button1.Enabled = false;
+                }
+                else
+                {
+                    label3.ForeColor = Color.Black;
+                    button1.Enabled = true;
+                }
+            }
+            catch
+            {
+                
+            }
+            
+            
         }
     }
 }
