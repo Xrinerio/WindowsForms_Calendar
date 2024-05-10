@@ -182,9 +182,8 @@
             label8.AutoSize = true;
             label8.Location = new Point(52, 42);
             label8.Name = "label8";
-            label8.Size = new Size(50, 20);
+            label8.Size = new Size(0, 20);
             label8.TabIndex = 16;
-            label8.Text = "label2";
             // 
             // InputForm
             // 

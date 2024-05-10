@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             btnprev = new Button();
             btnnext = new Button();
             daycontainer = new FlowLayoutPanel();
@@ -43,7 +42,6 @@
             button1 = new Button();
             flowLayoutPanel1 = new FlowLayoutPanel();
             label8 = new Label();
-            btn_refresh = new Panel();
             SuspendLayout();
             // 
             // btnprev
@@ -188,24 +186,12 @@
             label8.TabIndex = 14;
             label8.Click += Refresh;
             // 
-            // btn_refresh
-            // 
-            btn_refresh.BackgroundImage = (Image)resources.GetObject("btn_refresh.BackgroundImage");
-            btn_refresh.BackgroundImageLayout = ImageLayout.Center;
-            btn_refresh.Cursor = Cursors.Hand;
-            btn_refresh.Location = new Point(1207, 57);
-            btn_refresh.Name = "btn_refresh";
-            btn_refresh.Size = new Size(50, 50);
-            btn_refresh.TabIndex = 15;
-            btn_refresh.Click += Refresh;
-            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.WhiteSmoke;
             ClientSize = new Size(1290, 950);
-            Controls.Add(btn_refresh);
             Controls.Add(label8);
             Controls.Add(flowLayoutPanel1);
             Controls.Add(button1);
@@ -246,6 +232,5 @@
         private Button button1;
         private FlowLayoutPanel flowLayoutPanel1;
         private Label label8;
-        private Panel btn_refresh;
     }
 }

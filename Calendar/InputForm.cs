@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Calendar
 {
@@ -15,6 +16,8 @@ namespace Calendar
     {
         public int year, month, day;
         List<Data> datas = new List<Data>();
+        Data tofile;
+        string otherdata = "";
         bool first = true;
 
         public void Clean()
@@ -26,13 +29,17 @@ namespace Calendar
             
         }
 
-        private void AddToDB(string fileName)
+        private void AddToDB()
         {
-            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", true))
+            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", false))
             {
-                writer.WriteLine(fileName);
-                writer.Close();
+                writer.Write(otherdata);
+                for (int i = 0; i < datas.Count; i++)
+                {   
+                    writer.WriteLine(datas[i].Compil());
+                }
             }
+            LoadDB();
         }
         public static class Global
         {
@@ -76,7 +83,7 @@ namespace Calendar
             ReadSlovar("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\slovar.txt");
             checkedListBox1.CheckOnClick = true;
             textBox1.Visible = false;
-            textBox_nowtime.Mask = "00:00";
+            
         }
 
         private void InputForm_Load(object sender, EventArgs e)
@@ -89,7 +96,7 @@ namespace Calendar
             inputdate.Text = new DateTime(year, month, day).ToString("D");
             textBox_nowtime.Text = DateTime.Now.ToString("t");
             
-
+            LoadDB();
             LoadItems();
         }
 
@@ -121,35 +128,50 @@ namespace Calendar
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string tofile = $"{textBox_nowtime.Text}::{day}::{month}::{year}::";
+            tofile = new Data(textBox_nowtime.Text, day, month, year);
 
             if (checkBox1.Checked)
             {
-                tofile += "note::" + textBox1.Text + "::";
+                tofile.note = textBox1.Text;
             }
             if (textBox_input.Text != null)
             {
-                tofile += "press::" + textBox_input.Text + "::";
+                tofile.press = textBox_input.Text;
             }
             if (checkedListBox1.CheckedItems.Count > 0)
             {
-                string sympt = "sympt";
                 foreach (string el in checkedListBox1.CheckedItems)
                 {
-                    sympt += "::" + el;
+                    tofile.sympt.Add(el);
                 }
-                tofile += sympt;
+
             }
-            foreach(Data data in datas)
+            if (datas.Count > 0)
             {
-                if (textBox1.Text != data.note && textBox_input.Text != data.press && data.day != day && data.month != month && data.year != year && data.time != textBox_nowtime.Text)
+                bool flag = true;
+                for (int i = 0; i < datas.Count; i++)
+                {   
+                    Data data = datas[i];
+                    if (data.day == day && data.month == month && data.year == year && data.time == tofile.time)
+                    {
+                        data.sympt.Clear();
+                        data.sympt.AddRange(tofile.sympt);
+                        data.note = tofile.note;
+                        data.press = tofile.press;
+                        flag = false;
+                    }
+                }
+                if (flag)
                 {
-                    AddToDB(tofile);
+                    datas.Add(tofile);
                 }
             }
-            
-            
-            this.Close();
+            else 
+            {
+                datas.Add(tofile);
+            }
+            AddToDB(); 
+            Close();
         }
 
         private void textBox_nowtime_TextChanged(object sender, EventArgs e)
@@ -182,7 +204,6 @@ namespace Calendar
         {
             using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
             {
-                datas.Clear();
                 string? line = sr.ReadLine();
                 while (line != null)
                 {
@@ -192,7 +213,6 @@ namespace Calendar
                         if (text[1] == Convert.ToString(day) && text[2] == Convert.ToString(month) && text[3] == Convert.ToString(year))
                         {
                             checkedListBox2.Items.Add(text[0]);
-                            datas.Add(new Data(line));
                         }
                     }
                     catch
@@ -203,7 +223,7 @@ namespace Calendar
                 }
             }
             checkedListBox2.Items.Add("Добавить запись");
-            checkedListBox2.SetSelected(datas.Count,true);
+            checkedListBox2.SetSelected(checkedListBox2.Items.Count-1,true);
         }
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -264,6 +284,29 @@ namespace Calendar
 
             
         }
+        private void LoadDB()
+        {
+            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            {
+                otherdata = "";
+                datas.Clear();
+                string? line = sr.ReadLine();
+                while (line != null)
+                {
+                    Data temp_data = new Data(line);
+                    if (temp_data.day == day && temp_data.month == month && temp_data.year == year)
+                    {
+                        datas.Add(temp_data);
+                    }
+                    else
+                    {
+                        otherdata += line + "\n";
+                    }
+                    
+                    line = sr.ReadLine();
+                }
+            }
+        }
     }
 
     public partial class Data
@@ -273,6 +316,15 @@ namespace Calendar
         public string note = "";
         public string press = "";
         public List<string> sympt = new List<string>();
+        
+        public Data() { }
+        public Data(string time, int day, int month, int year) 
+        {
+            this.time = time;
+            this.day = day;
+            this.month = month;
+            this.year = year;
+        }
         public Data(string line) 
         {
             string[] data = line.Split("::");
@@ -305,10 +357,39 @@ namespace Calendar
                 {
                     for(int j = i;  j < data.Length; j++)
                     {
-                        sympt.Add(data[j]);
+                        if (data[j] != "sympt")
+                        {
+                            sympt.Add(data[j]);
+                        }
                     }
                 }
             }
+        }
+
+        public string Compil()
+        {
+            string exp = "";
+            exp += this.time + "::";
+            exp += this.day + "::";
+            exp += this.month + "::";
+            exp += this.year + "::";
+            if (this.note != "")
+            {
+                exp += "note::" + this.note + "::";
+            }
+            if (this.press != "")
+            {
+                exp += "press::" + this.press + "::";
+            }
+            if (this.sympt.Count > 0)
+            {
+                exp += "sympt";
+                for (int j = 0; j < this.sympt.Count; j++)
+                {
+                    exp += "::" + this.sympt[j];
+                }
+            }
+            return exp;
         }
     }
 }
