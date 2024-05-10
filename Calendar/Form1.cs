@@ -32,7 +32,8 @@ namespace Calendar
         {
             LoadDB();
             string monthname = new DateTime(year, month, 1).ToString("MMMM", CultureInfo.GetCultureInfo("ru"));
-            monthyear.Text = monthname + " " + year;
+            String MonthhName = monthname.Substring(0, 1).ToUpper() + monthname.Substring(1);
+            monthyear.Text = MonthhName + " " + year;
 
             DateTime startmonth = new DateTime(year, month, 1);
             int days = DateTime.DaysInMonth(year, month) + 1;

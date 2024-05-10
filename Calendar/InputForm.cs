@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Calendar
@@ -26,7 +27,7 @@ namespace Calendar
             textBox1.Clear();
             checkBox1.Checked = false;
             checkedListBox1.Items.Clear();
-            
+            btn_del.Visible = false;
         }
 
         private void AddToDB()
@@ -35,7 +36,7 @@ namespace Calendar
             {
                 writer.Write(otherdata);
                 for (int i = 0; i < datas.Count; i++)
-                {   
+                {
                     writer.WriteLine(datas[i].Compil());
                 }
             }
@@ -83,7 +84,7 @@ namespace Calendar
             ReadSlovar("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\slovar.txt");
             checkedListBox1.CheckOnClick = true;
             textBox1.Visible = false;
-            
+
         }
 
         private void InputForm_Load(object sender, EventArgs e)
@@ -95,7 +96,8 @@ namespace Calendar
             }
             inputdate.Text = new DateTime(year, month, day).ToString("D");
             textBox_nowtime.Text = DateTime.Now.ToString("t");
-            
+            btn_del.Visible = false;
+
             LoadDB();
             LoadItems();
         }
@@ -128,15 +130,22 @@ namespace Calendar
 
         private void button1_Click(object sender, EventArgs e)
         {
+            bool flag = false;
             tofile = new Data(textBox_nowtime.Text, day, month, year);
 
             if (checkBox1.Checked)
             {
-                tofile.note = textBox1.Text;
+                if(textBox1.Text != "") 
+                {
+                    tofile.note = textBox1.Text;
+                    flag = true;
+                }
+                
             }
-            if (textBox_input.Text != null)
+            if (textBox_input.Text != "")
             {
                 tofile.press = textBox_input.Text;
+                flag = true;
             }
             if (checkedListBox1.CheckedItems.Count > 0)
             {
@@ -144,33 +153,66 @@ namespace Calendar
                 {
                     tofile.sympt.Add(el);
                 }
-
+                flag = true;
             }
-            if (datas.Count > 0)
+
+            if (flag)
             {
-                bool flag = true;
-                for (int i = 0; i < datas.Count; i++)
-                {   
-                    Data data = datas[i];
-                    if (data.day == day && data.month == month && data.year == year && data.time == tofile.time)
+                if (datas.Count > 0)
+                {
+                    bool flag2 = true;
+                    for (int i = 0; i < datas.Count; i++)
                     {
-                        data.sympt.Clear();
-                        data.sympt.AddRange(tofile.sympt);
-                        data.note = tofile.note;
-                        data.press = tofile.press;
-                        flag = false;
+                        Data data = datas[i];
+                        if (data.day == day && data.month == month && data.year == year && data.time == tofile.time)
+                        {
+                            data.sympt.Clear();
+                            data.sympt.AddRange(tofile.sympt);
+                            data.note = tofile.note;
+                            data.press = tofile.press;
+                            flag2 = false;
+                        }
+                    }
+                    if (flag2)
+                    {
+                        datas.Add(tofile);
                     }
                 }
-                if (flag)
+                else
                 {
                     datas.Add(tofile);
                 }
             }
-            else 
+            
+            AddToDB();
+
+
+            if(showDesc.Checked == true)
             {
-                datas.Add(tofile);
+                string outtext = "";
+                foreach (string el in checkedListBox1.CheckedItems)
+                {
+                    try
+                    {
+                        if (Global.slovar[el.ToString()].Split("::").Length >= 2)
+                        {
+                            foreach (string mel in Global.slovar[el.ToString()].Split("::"))
+                            {
+                                outtext += mel + "\n";
+                            }
+                        }
+                        else { outtext += Global.slovar[el.ToString()] + "\n"; }
+                        outtext += "\n";
+                    }
+                    catch { continue; }
+
+                }
+                MessageBox.Show(
+                    $"{outtext}",
+                    "Ваши результаты",
+                    MessageBoxButtons.OK);
             }
-            AddToDB(); 
+
             Close();
         }
 
@@ -202,28 +244,12 @@ namespace Calendar
 
         private void LoadItems()
         {
-            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            for(int i = 0; i < datas.Count; i++)
             {
-                string? line = sr.ReadLine();
-                while (line != null)
-                {
-                    string[] text = line.Split("::");
-                    try
-                    {
-                        if (text[1] == Convert.ToString(day) && text[2] == Convert.ToString(month) && text[3] == Convert.ToString(year))
-                        {
-                            checkedListBox2.Items.Add(text[0]);
-                        }
-                    }
-                    catch
-                    {
-                        continue;
-                    }
-                    line = sr.ReadLine();
-                }
+                checkedListBox2.Items.Add(datas[i].time);
             }
             checkedListBox2.Items.Add("Добавить запись");
-            checkedListBox2.SetSelected(checkedListBox2.Items.Count-1,true);
+            checkedListBox2.SetSelected(checkedListBox2.Items.Count - 1, true);
         }
 
         private void checkedListBox2_SelectedIndexChanged(object sender, EventArgs e)
@@ -233,25 +259,26 @@ namespace Calendar
                 string? selectedTime = Convert.ToString(checkedListBox2.SelectedItem);
                 foreach (Data data in datas)
                 {
-                    if(data.time == selectedTime)
+                    if (data.time == selectedTime)
                     {
                         Clean();
+                        btn_del.Visible = true;
                         foreach (var item in Global.slovar)
                         {
                             checkedListBox1.Items.Add(item.Key);
                         }
                         textBox_nowtime.Text = selectedTime;
                         textBox_input.Text = data.press;
-                        if(data.note != "")
+                        if (data.note != "")
                         {
                             checkBox1.Checked = true;
                             textBox1.Text = data.note;
                         }
-                        foreach(string el in data.sympt)
+                        foreach (string el in data.sympt)
                         {
-                            for(int i = 0; i < checkedListBox1.Items.Count; i++)
+                            for (int i = 0; i < checkedListBox1.Items.Count; i++)
                             {
-                                if(el == checkedListBox1.Items[i].ToString())
+                                if (el == checkedListBox1.Items[i].ToString())
                                 {
                                     checkedListBox1.SetItemChecked(i, true);
                                 }
@@ -279,10 +306,10 @@ namespace Calendar
             }
             catch
             {
-                
+
             }
 
-            
+
         }
         private void LoadDB()
         {
@@ -302,10 +329,19 @@ namespace Calendar
                     {
                         otherdata += line + "\n";
                     }
-                    
+
                     line = sr.ReadLine();
                 }
             }
+        }
+
+        private void btn_del_Click(object sender, EventArgs e)
+        {
+            datas.RemoveAt(checkedListBox2.SelectedIndex);
+            AddToDB();
+            Clean();
+            checkedListBox2.Items.Clear();
+            LoadItems();
         }
     }
 

@@ -43,6 +43,8 @@
             textBox_input = new MaskedTextBox();
             checkedListBox2 = new ListBox();
             label8 = new Label();
+            btn_del = new Button();
+            showDesc = new CheckBox();
             SuspendLayout();
             // 
             // label1
@@ -59,7 +61,7 @@
             // 
             inputdate.AutoSize = true;
             inputdate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 204);
-            inputdate.Location = new Point(217, 79);
+            inputdate.Location = new Point(28, 52);
             inputdate.Name = "inputdate";
             inputdate.Size = new Size(62, 28);
             inputdate.TabIndex = 1;
@@ -171,9 +173,9 @@
             // 
             checkedListBox2.BorderStyle = BorderStyle.FixedSingle;
             checkedListBox2.FormattingEnabled = true;
-            checkedListBox2.Location = new Point(28, 79);
+            checkedListBox2.Location = new Point(28, 99);
             checkedListBox2.Name = "checkedListBox2";
-            checkedListBox2.Size = new Size(150, 342);
+            checkedListBox2.Size = new Size(150, 322);
             checkedListBox2.TabIndex = 15;
             checkedListBox2.SelectedIndexChanged += checkedListBox2_SelectedIndexChanged;
             // 
@@ -185,12 +187,35 @@
             label8.Size = new Size(0, 20);
             label8.TabIndex = 16;
             // 
+            // btn_del
+            // 
+            btn_del.BackColor = Color.White;
+            btn_del.Location = new Point(28, 428);
+            btn_del.Name = "btn_del";
+            btn_del.Size = new Size(150, 29);
+            btn_del.TabIndex = 17;
+            btn_del.Text = "Удалить запись";
+            btn_del.UseVisualStyleBackColor = false;
+            btn_del.Click += btn_del_Click;
+            // 
+            // showDesc
+            // 
+            showDesc.AutoSize = true;
+            showDesc.Location = new Point(503, 431);
+            showDesc.Name = "showDesc";
+            showDesc.Size = new Size(155, 24);
+            showDesc.TabIndex = 18;
+            showDesc.Text = "Показать советы?";
+            showDesc.UseVisualStyleBackColor = true;
+            // 
             // InputForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.FromArgb(238, 236, 236);
             ClientSize = new Size(774, 469);
+            Controls.Add(showDesc);
+            Controls.Add(btn_del);
             Controls.Add(label8);
             Controls.Add(checkedListBox2);
             Controls.Add(textBox_input);
@@ -231,5 +256,7 @@
         private MaskedTextBox textBox_input;
         private ListBox checkedListBox2;
         private Label label8;
+        private Button btn_del;
+        private CheckBox showDesc;
     }
 }
