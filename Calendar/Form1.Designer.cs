@@ -70,9 +70,9 @@
             // 
             // daycontainer
             // 
-            daycontainer.Location = new Point(38, 201);
+            daycontainer.Location = new Point(31, 201);
             daycontainer.Name = "daycontainer";
-            daycontainer.Size = new Size(1219, 716);
+            daycontainer.Size = new Size(1230, 737);
             daycontainer.TabIndex = 2;
             // 
             // label1

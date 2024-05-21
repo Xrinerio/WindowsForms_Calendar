@@ -26,6 +26,16 @@ namespace Calendar
         {
             
         }
+
+        public void NowDay()
+        {
+            todaysday.Text = "Сегодня";
+        }
+
+        public void NowDayClear()
+        {
+            todaysday.Text = "";
+        }
         public void days(int numday)
         {
             UCDays.Text = numday + "";

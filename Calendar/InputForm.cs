@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -15,6 +16,7 @@ namespace Calendar
 {
     public partial class InputForm : Form
     {
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DateBase.txt");
         public int year, month, day;
         List<Data> datas = new List<Data>();
         Data tofile;
@@ -23,16 +25,49 @@ namespace Calendar
 
         public void Clean()
         {
-            textBox_input.Clear();
+            textBox_input.Text = "/";
             textBox1.Clear();
             checkBox1.Checked = false;
             checkedListBox1.Items.Clear();
             btn_del.Visible = false;
         }
+        
+
+        private string SklonMonth(int value)
+        {
+            switch (value)
+            {
+                case 1:
+                    return "Января";
+                case 2:
+                    return "Февраля";
+                case 3:
+                    return "Марта";
+                case 4:
+                    return "Апреля";
+                case 5:
+                    return "Мая";
+                case 6:
+                    return "Июня";
+                case 7:
+                    return "Июля";
+                case 8:
+                    return "Августа";
+                case 9:
+                    return "Сентября";
+                case 10:
+                    return "Октября";
+                case 11:
+                    return "Ноября";
+                case 12:
+                    return "Декабря";
+            }
+            return "MonthNameError";
+        }
 
         private void AddToDB()
         {
-            using (StreamWriter writer = new StreamWriter("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", false))
+            using (StreamWriter writer = new StreamWriter(path, false))
             {
                 writer.Write(otherdata);
                 for (int i = 0; i < datas.Count; i++)
@@ -67,23 +102,14 @@ namespace Calendar
                 }
             }
         }
-        public string Age(int age)
-        {
-            string age_str = age.ToString();
-            string k = "";
-            if ((age == 0) || ((age > 4) & (age < 21)) || ((age > 20) & ((age_str.EndsWith("0")) || (age_str.EndsWith("5")) || (age_str.EndsWith("6")) || (age_str.EndsWith("7")) || (age_str.EndsWith("8")) || (age_str.EndsWith("9"))))) k = "лет";
-            else if ((age_str == "1") || ((age > 20) & (age_str.EndsWith("1")))) k = "год";
-            else if (((age > 1) & (age < 5)) || ((age > 20) & ((age_str.EndsWith("2")) || (age_str.EndsWith("3")) || (age_str.EndsWith("4"))))) k = "года";
-
-            k = age_str + " " + k;
-            return k;
-        }
+        
         public InputForm()
         {
             InitializeComponent();
-            ReadSlovar("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\slovar.txt");
+            ReadSlovar(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "slovar.txt"));
             checkedListBox1.CheckOnClick = true;
             textBox1.Visible = false;
+            textBox_nowtime.Mask = "00:00";
 
         }
 
@@ -94,7 +120,8 @@ namespace Calendar
             {
                 checkedListBox1.Items.Add(item.Key);
             }
-            inputdate.Text = new DateTime(year, month, day).ToString("D");
+            
+            inputdate.Text = day + " " + SklonMonth(month) + " " + year;
             textBox_nowtime.Text = DateTime.Now.ToString("t");
             btn_del.Visible = false;
 
@@ -133,16 +160,18 @@ namespace Calendar
             bool flag = false;
             tofile = new Data(textBox_nowtime.Text, day, month, year);
 
-            if (checkBox1.Checked)
+            if (checkBox1.Checked && textBox1.Text != "")
             {
-                if(textBox1.Text != "") 
+                string[] tofilenote = textBox1.Text.Split("\r\n");
+                foreach (string s in tofilenote)
                 {
-                    tofile.note = textBox1.Text;
-                    flag = true;
+                    tofile.note += s + "//";
                 }
-                
+
+                flag = true;
+
             }
-            if (textBox_input.Text != "")
+            if (textBox_input.Text != "" && textBox_input.Text != "/")
             {
                 tofile.press = textBox_input.Text;
                 flag = true;
@@ -183,13 +212,36 @@ namespace Calendar
                     datas.Add(tofile);
                 }
             }
-            
+
             AddToDB();
 
 
-            if(showDesc.Checked == true)
+            if (showDesc.Checked == true)
             {
                 string outtext = "";
+                if(textBox_input.Text != "")
+                {
+                    int[] a = textBox_input.Text.Split('/').Where(x => !string.IsNullOrWhiteSpace(x)).Select(x => int.Parse(x)).ToArray();
+                    if (a.Length == 2)
+                    {
+                        if (a[0] > 130)
+                        {
+                            outtext += "~У вас повышенное систалическое давление \n";
+                        }else if (a[0] < 110)
+                        {
+                            outtext += "~У вас пониженное систалическое давление \n";
+                        }
+                        if (a[1] > 85)
+                        {
+                            outtext += "~У вас повышенное диастолическое давление \n";
+                        }
+                        else if (a[1] < 70)
+                        {
+                            outtext += "~У вас пониженное диастолическое давление \n";
+                        }
+                        outtext += "\n";
+                    }
+                }
                 foreach (string el in checkedListBox1.CheckedItems)
                 {
                     try
@@ -207,10 +259,14 @@ namespace Calendar
                     catch { continue; }
 
                 }
-                MessageBox.Show(
+                if(outtext != "")
+                {
+                    MessageBox.Show(
                     $"{outtext}",
                     "Ваши результаты",
                     MessageBoxButtons.OK);
+                }
+                
             }
 
             Close();
@@ -244,7 +300,7 @@ namespace Calendar
 
         private void LoadItems()
         {
-            for(int i = 0; i < datas.Count; i++)
+            for (int i = 0; i < datas.Count; i++)
             {
                 checkedListBox2.Items.Add(datas[i].time);
             }
@@ -272,7 +328,11 @@ namespace Calendar
                         if (data.note != "")
                         {
                             checkBox1.Checked = true;
-                            textBox1.Text = data.note;
+                            foreach (string s in data.note.Split("//"))
+                            {
+                                textBox1.AppendText(s + "\r\n");
+                            }
+
                         }
                         foreach (string el in data.sympt)
                         {
@@ -299,7 +359,7 @@ namespace Calendar
                         {
                             checkedListBox1.Items.Add(item.Key);
                         }
-                        inputdate.Text = new DateTime(year, month, day).ToString("D");
+                        inputdate.Text = day + " " + SklonMonth(month) + " " + year;
                         textBox_nowtime.Text = DateTime.Now.ToString("t");
                     }
                 }
@@ -313,7 +373,7 @@ namespace Calendar
         }
         private void LoadDB()
         {
-            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            using (StreamReader sr = new StreamReader(path, Encoding.UTF8))
             {
                 otherdata = "";
                 datas.Clear();
@@ -342,6 +402,18 @@ namespace Calendar
             Clean();
             checkedListBox2.Items.Clear();
             LoadItems();
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox1.Text.Split("\r\n").Length > 5)
+            {
+                textBox1.ScrollBars = ScrollBars.Vertical;
+            }
+            else
+            {
+                textBox1.ScrollBars = ScrollBars.None;
+            }
         }
     }
 

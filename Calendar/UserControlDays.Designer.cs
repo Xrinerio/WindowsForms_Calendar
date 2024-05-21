@@ -30,6 +30,7 @@
         {
             UCDays = new Label();
             notesscore = new Label();
+            todaysday = new Label();
             SuspendLayout();
             // 
             // UCDays
@@ -41,6 +42,7 @@
             UCDays.Size = new Size(34, 28);
             UCDays.TabIndex = 0;
             UCDays.Text = "00";
+            UCDays.Click += UserControlDays_Click;
             // 
             // notesscore
             // 
@@ -50,12 +52,24 @@
             notesscore.Name = "notesscore";
             notesscore.Size = new Size(0, 23);
             notesscore.TabIndex = 1;
+            notesscore.Click += UserControlDays_Click;
+            // 
+            // todaysday
+            // 
+            todaysday.AutoSize = true;
+            todaysday.Font = new Font("Bookman Old Style", 12F, FontStyle.Italic, GraphicsUnit.Point, 204);
+            todaysday.Location = new Point(55, 20);
+            todaysday.Name = "todaysday";
+            todaysday.Size = new Size(0, 22);
+            todaysday.TabIndex = 2;
+            todaysday.Click += UserControlDays_Click;
             // 
             // UserControlDays
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Gainsboro;
+            Controls.Add(todaysday);
             Controls.Add(notesscore);
             Controls.Add(UCDays);
             Cursor = Cursors.Hand;
@@ -71,5 +85,6 @@
 
         private Label UCDays;
         private Label notesscore;
+        private Label todaysday;
     }
 }

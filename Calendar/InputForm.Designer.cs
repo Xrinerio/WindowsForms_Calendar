@@ -70,29 +70,31 @@
             // label3
             // 
             label3.AutoSize = true;
+            label3.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label3.Location = new Point(217, 116);
             label3.Name = "label3";
-            label3.Size = new Size(54, 20);
+            label3.Size = new Size(206, 23);
             label3.TabIndex = 2;
-            label3.Text = "Время";
+            label3.Text = "Время(в формате чч:мм)";
             // 
             // label4
             // 
             label4.AutoSize = true;
+            label4.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
             label4.Location = new Point(220, 200);
             label4.Name = "label4";
-            label4.Size = new Size(196, 20);
+            label4.Size = new Size(220, 23);
             label4.TabIndex = 3;
             label4.Text = "Выберите ваши симптомы";
             // 
             // label5
             // 
-            label5.AutoSize = true;
-            label5.Location = new Point(516, 116);
+            label5.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
+            label5.Location = new Point(516, 88);
             label5.Name = "label5";
-            label5.Size = new Size(175, 20);
+            label5.Size = new Size(198, 51);
             label5.TabIndex = 4;
-            label5.Text = "Введите ваше давление";
+            label5.Text = "Введите ваше давление через /";
             // 
             // textBox1
             // 
@@ -101,21 +103,24 @@
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(231, 136);
             textBox1.TabIndex = 7;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // checkedListBox1
             // 
+            checkedListBox1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
             checkedListBox1.FormattingEnabled = true;
             checkedListBox1.Location = new Point(220, 230);
             checkedListBox1.Name = "checkedListBox1";
-            checkedListBox1.Size = new Size(290, 136);
+            checkedListBox1.Size = new Size(290, 129);
             checkedListBox1.TabIndex = 8;
             // 
             // checkBox1
             // 
             checkBox1.AutoSize = true;
+            checkBox1.Font = new Font("Segoe UI", 10.2F, FontStyle.Regular, GraphicsUnit.Point, 204);
             checkBox1.Location = new Point(516, 196);
             checkBox1.Name = "checkBox1";
-            checkBox1.Size = new Size(156, 24);
+            checkBox1.Size = new Size(174, 27);
             checkBox1.TabIndex = 9;
             checkBox1.Text = "Добавить заметку";
             checkBox1.UseVisualStyleBackColor = true;
@@ -168,6 +173,8 @@
             textBox_input.Name = "textBox_input";
             textBox_input.Size = new Size(175, 27);
             textBox_input.TabIndex = 14;
+            textBox_input.Text = "/";
+            textBox_input.TextAlign = HorizontalAlignment.Center;
             // 
             // checkedListBox2
             // 

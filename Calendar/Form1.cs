@@ -8,7 +8,7 @@ namespace Calendar
 {
     public partial class Form1 : Form
     {
-        InputForm? temp = null;
+        string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DateBase.txt");
         int month, year;
         InputForm inputForm = new InputForm();
         UserControlDays[] spisokdays = new UserControlDays[31];
@@ -30,10 +30,14 @@ namespace Calendar
         }
         private void LoadPage(int year, int month)
         {
+            if(!File.Exists(path))
+            {
+                File.Create(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "DateBase.txt")).Close();
+            }
             LoadDB();
             string monthname = new DateTime(year, month, 1).ToString("MMMM", CultureInfo.GetCultureInfo("ru"));
-            String MonthhName = monthname.Substring(0, 1).ToUpper() + monthname.Substring(1);
-            monthyear.Text = MonthhName + " " + year;
+            monthname = monthname.Substring(0, 1).ToUpper() + monthname.Substring(1);
+            monthyear.Text = monthname + " " + year;
 
             DateTime startmonth = new DateTime(year, month, 1);
             int days = DateTime.DaysInMonth(year, month) + 1;
@@ -51,6 +55,15 @@ namespace Calendar
                 spisokdays[i - 1].day = i;
                 spisokdays[i - 1].days(i);
                 spisokdays[i - 1].BackColor = Color.Gainsboro;
+
+                if(year == DateTime.Now.Year && month == DateTime.Now.Month && i == DateTime.Now.Day)
+                {
+                    spisokdays[i - 1].NowDay();
+                }
+                else
+                {
+                    spisokdays[i - 1].NowDayClear();
+                }
                 int k = 0;
                 
                 if (CheckDBdata(year, month, i))
@@ -126,7 +139,7 @@ namespace Calendar
 
         private bool CheckDBdata(int takeyear, int takemonth, int takeday)
         {
-            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            using (StreamReader sr = new StreamReader(path, Encoding.UTF8))
             {
                 string? line = sr.ReadLine();
                 while (line != null)
@@ -151,7 +164,7 @@ namespace Calendar
 
         private void LoadDB()
         {
-            using (StreamReader sr = new StreamReader("C:\\Users\\babur\\OneDrive\\Рабочий стол\\Calendar\\DB.txt", Encoding.UTF8))
+            using (StreamReader sr = new StreamReader(path, Encoding.UTF8))
             {
                 datas.Clear();
                 string? line = sr.ReadLine();
